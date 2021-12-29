@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
-import debounce from "lodash.debounce";
+import React, { useEffect, useState } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import classnames from "classnames";
@@ -27,13 +26,9 @@ function Users() {
   const [pagination, setPagination] = useState();
   const [username, setUsername] = useState("");
 
-  const { data, error, loading, handleChangePage, handleSearch } = useUsers({
+  const { data, error, loading, handleChangePage, handleDebounceSearch } = useUsers({
     username,
   });
-
-  const debouncedChangeHandler = useCallback(() => {
-    debounce(handleSearch, 500);
-  }, [handleSearch]);
 
   useEffect(() => {
     if (loading || error) return;
@@ -42,8 +37,8 @@ function Users() {
   }, [data, loading, error]);
 
   useEffect(() => {
-    debouncedChangeHandler();
-  }, [username, debouncedChangeHandler]);
+    handleDebounceSearch();
+  }, [username, handleDebounceSearch]);
 
   return (
     <Layout title="Users">

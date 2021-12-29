@@ -28,9 +28,17 @@ const useUsers = ({username}) => {
     callExcuteGetUsers();
   };
 
-  const handleSearch = (event) => {
-    callExcuteGetUsers();
+  const debounce = (func, timeout = 500) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
   }
+
+  const handleDebounceSearch = useCallback(() => {
+    debounce(() => callExcuteGetUsers());
+  }, [callExcuteGetUsers]);
 
   useEffect(() => {
     callExcuteGetUsers();
@@ -41,7 +49,7 @@ const useUsers = ({username}) => {
     loading,
     error,
     handleChangePage,
-    handleSearch
+    handleDebounceSearch
   };
 };
 
