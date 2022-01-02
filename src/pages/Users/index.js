@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import debouce from "lodash.debounce";
 
 import { makeStyles } from "@material-ui/core/styles";
 import classnames from "classnames";
@@ -26,7 +27,7 @@ function Users() {
   const [pagination, setPagination] = useState();
   const [username, setUsername] = useState("");
 
-  const { data, error, loading, handleChangePage, handleDebounceSearch } = useUsers({
+  const { data, error, loading, handleChangePage, handleSearch } = useUsers({
     username,
   });
 
@@ -36,9 +37,11 @@ function Users() {
     setPagination(data?.meta?.pagination);
   }, [data, loading, error]);
 
+  const deboundeOnChange = debouce(handleSearch, 500)
+
   useEffect(() => {
-    handleDebounceSearch();
-  }, [username, handleDebounceSearch]);
+    deboundeOnChange();
+  }, [username]);
 
   return (
     <Layout title="Users">

@@ -28,28 +28,20 @@ const useUsers = ({username}) => {
     callExcuteGetUsers();
   };
 
-  const debounce = (func, timeout = 500) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => { func.apply(this, args); }, timeout);
-    };
-  }
-
-  const handleDebounceSearch = useCallback(() => {
-    debounce(() => callExcuteGetUsers());
+  const handleSearch = useCallback(() => {
+    callExcuteGetUsers();
   }, [callExcuteGetUsers]);
 
   useEffect(() => {
     callExcuteGetUsers();
-  }, [callExcuteGetUsers]);
+  }, []);
 
   return {
     data,
     loading,
     error,
     handleChangePage,
-    handleDebounceSearch
+    handleSearch
   };
 };
 
