@@ -1,15 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
-import useAxios from "axios-hooks";
 
-const useUsers = ({username}) => {
-  const [apiUrl, setApiUrl] = useState(process.env.REACT_APP_API_LINK)
+const useUsers = ({ username }) => {
+  const [apiUrl, setApiUrl] = useState(process.env.REACT_APP_API_LINK);
 
-  const [{ data, loading, error }, excuteGetUsers] = useAxios({
-    url: `${apiUrl}&name=${username}`,
-    method: "GET",
-  },{
-    manual: true,
-  });
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
+
+  const excuteGetUsers = useCallback(() => {
+    fetch(
+      `${username ? process.env.REACT_APP_API_LINK : apiUrl}&name=${username}`
+    )
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setData(result);
+          setLoading(false);
+        },
+        (error) => {
+          setError(error);
+          setLoading(false);
+        }
+      );
+  }, [username, apiUrl]);
 
   const callExcuteGetUsers = useCallback(() => {
     return excuteGetUsers();
@@ -20,12 +33,9 @@ const useUsers = ({username}) => {
     let next = links?.next;
     let prev = links?.previous;
 
-    if(direction === 'prev' && !prev) return;
+    if (direction === "prev" && !prev) return;
 
-    direction === 'next' && next ?
-    setApiUrl(next) : setApiUrl(prev);
-
-    callExcuteGetUsers();
+    direction === "next" && next ? setApiUrl(next) : setApiUrl(prev);
   };
 
   const handleSearch = useCallback(() => {
@@ -34,14 +44,14 @@ const useUsers = ({username}) => {
 
   useEffect(() => {
     callExcuteGetUsers();
-  }, []);
+  }, [apiUrl]);
 
   return {
     data,
     loading,
     error,
     handleChangePage,
-    handleSearch
+    handleSearch,
   };
 };
 

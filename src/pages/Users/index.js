@@ -37,10 +37,18 @@ function Users() {
     setPagination(data?.meta?.pagination);
   }, [data, loading, error]);
 
-  const deboundeOnChange = debouce(handleSearch, 500)
+  const debounceOnChange = (func, time = 300) => {
+    let timer = setTimeout(()=> {
+      func.apply()
+    }, time)
+
+    while (timer--) {
+      clearTimeout(timer);
+    }
+  }
 
   useEffect(() => {
-    deboundeOnChange();
+    debounceOnChange(handleSearch);
   }, [username]);
 
   return (
